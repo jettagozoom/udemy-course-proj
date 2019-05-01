@@ -1,14 +1,11 @@
 <div class="row">
-  <!--Recipe list (left side)-->
-  <div class="col-md-5">
-    <app-recipe-list></app-recipe-list>
-  </div>
+    <!--Recipe list (left side)-->
+    <div class="col-md-5">
+        <app-recipe-list></app-recipe-list>
+    </div>
 
-  <!--Individual recipe details-->
-  <div class="col-md-7">
-    <app-recipe-detail *ngIf="selectedRecipe; else infoText" [recipe]="selectedRecipe"></app-recipe-detail>
-    <ng-template #infoText>
-      <p>Please select a Recipe!</p>
-    </ng-template>
-  </div>
+    <!--Individual recipe details-->
+    <div class="col-md-7">
+        <router-outlet></router-outlet>
+    </div>
 </div>
