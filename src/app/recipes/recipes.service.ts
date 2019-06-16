@@ -1,22 +1,25 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
+import {Subject} from 'rxjs';
 
-import { Recipe } from './recipe.model';
-import { Ingredient } from '../shared/ingredient.model';
+import {Recipe} from './recipe.model';
+import {Ingredient} from '../shared/ingredient.model';
 import {ShoppingListService} from '../shopping-list/shopping-list.service';
 
 @Injectable()
 export class RecipesService {
-  private recipes: Recipe[] = [
-    new Recipe('Pasta and Noodles',
-      'Penne Arrabiata',
-      'https://images.media-allrecipes.com/images/56589.png',
-      [
-        new Ingredient('Penne Pasta', 1),
-        new Ingredient('Cherry Tomatoes', 40),
-        new Ingredient('Fresh Basil', 1),
-      ]),
-    new Recipe('Baja Shrimp Tacos With Creamy Slaw',
-      `We love a crispy fried fish taco. But we might like this sweet shrimp
+    recipesChanged = new Subject<Recipe[]>();
+
+    private recipes: Recipe[] = [
+        new Recipe('Pasta and Noodles',
+            'Penne Arrabiata',
+            'https://images.media-allrecipes.com/images/56589.png',
+            [
+                new Ingredient('Penne Pasta', 1),
+                new Ingredient('Cherry Tomatoes', 40),
+                new Ingredient('Fresh Basil', 1),
+            ]),
+        new Recipe('Baja Shrimp Tacos With Creamy Slaw',
+            `We love a crispy fried fish taco. But we might like this sweet shrimp
       version even better than the original. A tangy cabbage slaw helps to balance
       the richness of the fried shrimp but we took extra steps to keep the batter light.
       Cutting the flour with a little cornstarch prevents it from getting tough
@@ -24,26 +27,42 @@ export class RecipesService {
       arrowroot if you have it. The bubbles in the seltzer add air so the batter
       stays crisp and light. Pro tip: whisking your batter over an ice bath will
       preserve more seltzer bubbles. Keep it cold until ready to use.`,
-      'https://cdn-image.realsimple.com/sites/default/files/styles/portrait_435x518/public/1492029558/shrimp-tacos.jpg?itok=e_wp4B5u',
-    [
-          new Ingredient('Shrimp', 8),
-          new Ingredient('Flour Tortillas', 8),
-          new Ingredient('Red Cabbage', 8),
-          new Ingredient('Cilantro', .333),
-      ])
-  ];
+            'https://cdn-image.realsimple.com/sites/default/files/styles/portrait_435x518/public/1492029558/shrimp-tacos.jpg?itok=e_wp4B5u',
+            [
+                new Ingredient('Shrimp', 8),
+                new Ingredient('Flour Tortillas', 8),
+                new Ingredient('Red Cabbage', 8),
+                new Ingredient('Cilantro', .333),
+            ])
+    ];
 
   constructor(private shoppingListService: ShoppingListService) { }
 
-  getRecipe(id: number) {
-     return this.recipes[id];
-  }
+    getRecipe(id: number) {
+        return this.recipes[id];
+    }
 
-  getRecipes() {
-    return this.recipes.slice();
-  }
+    getRecipes() {
+        return this.recipes.slice();
+    }
 
-  addIngredientsToShoppingList(ingredients: Ingredient[]) {
-    this.shoppingListService.addIngredients(ingredients);
-  }
+    addIngredientsToShoppingList(ingredients: Ingredient[]) {
+        this.shoppingListService.addIngredients(ingredients);
+    }
+
+    addRecipe(recipe: Recipe) {
+        this.recipes.push(recipe);
+        this.recipesChanged.next(this.recipes.slice());
+    }
+
+    deleteRecipe(index: number) {
+        this.recipes.splice(index, 1);
+        this.recipesChanged.next(this.recipes.slice());
+    }
+
+    updateRecipe(index: number, newRecipe: Recipe) {
+        newRecipe.id = index;
+        this.recipes[index] = newRecipe;
+        this.recipesChanged.next(this.recipes.slice());
+    }
 }

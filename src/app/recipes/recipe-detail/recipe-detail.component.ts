@@ -41,4 +41,9 @@ export class RecipeDetailComponent implements OnInit {
         // we wouldn't have needed to store 'this.id', a create this method.
     }
 
+    onDeleteRecipe() {
+        this.recipesService.deleteRecipe(this.id);
+        this.router.navigate(['/recipes']);
+    }
+
 }
